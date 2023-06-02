@@ -224,7 +224,31 @@ select 제품명, 제조업체
 from 제품테이블
 where 제품번호 not in(select 주문제품 from 주문테이블 where 주문고객 = 'BANANA');
 -- 대한식품이 제조한 모든 제품의 단가보다 비싼 제품의 제품명, 단가, 제조업체를 검색해보자
-
+-- 대한식품이 제조한 제품의 단가
+select max(단가) from 제품테이블 where 제조업체='대한식품';
+-- 4500원보다 비싼 제품의 제품명, 단가, 제조업체를 검색해보자
+select 제품명, 단가, 제조업체
+from 제품테이블
+where 단가 > 4500;
+-- subquery
+select 제품명, 단가, 제조업체
+from 제품테이블
+where 단가 > (select max(단가) from 제품테이블 where 제조업체='대한식품');
+-- ALL(And 조건 모두 만족해야함)
+-- in(or: 주어진 조건 중 하나라도 만족하면 참)
+select 제품명, 단가, 제조업체
+from 제품테이블
+where 단가 > ALL (select 단가 from 제품테이블 where 제조업체='대한식품');
+            -- ALL (4500,1200)
 -- 2022년3월15일 제품을 주문한 고객의 고객이름을 검색해보자.
+-- 주문테이블에서 2022년 3월 15일 제품을 주문한 주문고객; apple
+select 주문고객 from 주문테이블 where 주문일자 = '2022-03-15';
+--고객테이블에서 apple의 고객이름 검색
+select 고객이름 from 고객테이블 where 고객아이디 = 'APPLE';
+--SUBQUERY
+select 고객이름 from 고객테이블 
+where 고객아이디 = (select 주문고객 from 주문테이블 where 주문일자 = '2022-03-15');
 
 -- 2022년3월15일 제품을 주문하지 않은 고객의 고객이름을 검색해보자.
+select 고객이름 from 고객테이블 
+where 고객아이디 != (select 주문고객 from 주문테이블 where 주문일자 = '2022-03-15');
