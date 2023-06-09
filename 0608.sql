@@ -411,3 +411,55 @@ begin
     dbms_output.put_line('bookname: ' || i_bookname);
     dbms_output.put_line('price: ' || i_price);
 end;
+
+-- bookid를 입력받아서 책이름, 가격을 출력하는 프로시져 (방법1)
+create procedure book_test01
+(
+    p_id in book.bookid%type,
+    v_name out book.bookname%type,
+    v_price out book.price%type
+)as
+begin
+    select bookname, price
+    into v_name, v_price
+    from book
+    where bookid = p_id;
+end;
+
+declare
+    k_book book.bookname%type;
+    k_price book.price%type;
+begin
+    -- 프로시져를 호출
+    book_test01(1, k_book, k_price);
+    dbms_output.put_line('책이름: ' || k_book);
+    dbms_output.put_line('가격: ' || k_price);
+end;
+
+-- bookid를 입력받아서 책이름, 가격을 출력하는 프로시져 (방법2)
+create procedure book_test02
+(
+    v_id book.bookid%type
+)as
+v_name book.bookname%type;
+v_price book.price%type;
+begin
+    select bookname, price
+    into v_name, v_price
+    from book
+    where bookid = v_id;
+    
+    dbms_output.put_line('책이름: ' || v_book);
+    dbms_output.put_line('가격: ' || v_price);
+    
+-- 예외발생
+    exception
+        when no_data_found then
+            dbms_output.put_line('bookid가 존재하지 않습니다');
+        when others then
+            dbms_output.put_line('오류발생');
+end;
+
+-- 실행
+exec book_test02(4);
+
